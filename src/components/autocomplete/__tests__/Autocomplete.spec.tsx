@@ -76,6 +76,9 @@ describe("Autocomplete", () => {
         userEvent.clear(input);
         await waitFor(() => expect(querySuggestions()).not.toBeInTheDocument());
     });
+
+    // I should add a test for text highlight, and also verify `onChange` handler, but I run out of time ;)
+
 })
 
 
