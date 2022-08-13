@@ -13,11 +13,12 @@ export const Autocomplete = ({suggestionProducer, onChange, debounceTime}: Autoc
     const [currentValue, setCurrentValue] = useState<string>("");
     const [suggestions, setSuggestions] = useState<string[]>([]);
     const [fetchingSuggestions, setFetchingSuggestions] = useState(false);
+    const [seekSuggestions, setSeek] = useState(false);
 
     useEffect(() => {
         let canceled = false;
         let timeoutId: number | null = null;
-        if(currentValue) {
+        if(currentValue && seekSuggestions) {
             setFetchingSuggestions(true);
             timeoutId = Number(setTimeout(() => {
                 suggestionProducer(currentValue)
@@ -42,16 +43,17 @@ export const Autocomplete = ({suggestionProducer, onChange, debounceTime}: Autoc
                 clearTimeout(timeoutId);
             }
         }
-    }, [currentValue, debounceTime, suggestionProducer])
+    }, [currentValue, debounceTime, seekSuggestions, suggestionProducer])
 
-    const setValue = useCallback((value: string) => {
+    const setValue = useCallback((value: string, seek=false) => {
         onChange(value);
         setCurrentValue(value);
+        setSeek(seek);
     }, [onChange])
 
     const handleInput: ChangeEventHandler<HTMLInputElement> = useCallback((e) => {
         const value = e.target.value;
-        setValue(value);
+        setValue(value,true);
     }, [setValue])
 
     // We could optimize rendering Autocomplete further by using a reference to an 'observable'
