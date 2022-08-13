@@ -18,6 +18,10 @@
   background-color: white;
 }
 
+.autocomplete-suggestions:empty {
+  display: none;
+}
+
 .autocomplete-item {
   width: 100%;
   padding: 0.5rem;
