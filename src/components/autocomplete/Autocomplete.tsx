@@ -18,7 +18,7 @@ export const Autocomplete = ({suggestionProducer, onChange, debounceTime}: Autoc
     useEffect(() => {
         let canceled = false;
         let timeoutId: number | null = null;
-        if(currentValue && seekSuggestions) {
+        if(seekSuggestions && currentValue) {
             setFetchingSuggestions(true);
             timeoutId = Number(setTimeout(() => {
                 suggestionProducer(currentValue)

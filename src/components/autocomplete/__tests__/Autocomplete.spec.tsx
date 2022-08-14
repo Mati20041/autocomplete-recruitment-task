@@ -32,7 +32,7 @@ describe("Autocomplete", () => {
         // Arrange
         producer.mockResolvedValue(suggestionsFake);
 
-        const {getInput, queryItems} = renderAutocomplete();
+        const {getInput, queryItems, getSuggestions} = renderAutocomplete();
 
         const input = getInput();
         userEvent.type(input, "a")
@@ -46,10 +46,24 @@ describe("Autocomplete", () => {
         userEvent.click(items[1]);
 
         // Assert
-        await waitFor(() => expect(queryItems()).toHaveLength(0));
+        await waitFor(() => expect(getSuggestions()).toBeEmptyDOMElement());
         expect(input).toHaveValue(suggestionsFake[1]);
-        expect(onChange).toHaveBeenCalledWith("a");
         expect(onChange).toHaveBeenCalledWith(suggestionsFake[1]);
+    });
+
+    it("should display filtered suggestions based on input", async () => {
+        // Arrange
+        producer.mockResolvedValue(suggestionsFake)
+        // Act
+        const {getInput, getItems} = renderAutocomplete();
+
+        const input = getInput();
+        userEvent.type(input, "a");
+
+        // Assert
+        await waitFor(() => expect(getItems()).toHaveLength(2));
+
+        expect(getItems().map(it => it.textContent)).toEqual(["aa", "ab"]);
     });
 
     it("should hide suggestions and set input value on choosing", async () => {
@@ -67,21 +81,6 @@ describe("Autocomplete", () => {
 
         userEvent.clear(input);
         await waitFor(() => expect(getSuggestions()).toBeEmptyDOMElement());
-    });
-
-    it("should display filtered suggestions based on input", async () => {
-        // Arrange
-        producer.mockResolvedValue(suggestionsFake)
-        // Act
-        const {getInput, getItems} = renderAutocomplete();
-
-        const input = getInput();
-        userEvent.type(input, "a");
-
-        // Assert
-        await waitFor(() => expect(getItems()).toHaveLength(2));
-
-        expect(getItems().map(it => it.textContent)).toEqual(["aa", "ab"]);
     });
 
     it("should show loading indicator while fetching", async () => {
